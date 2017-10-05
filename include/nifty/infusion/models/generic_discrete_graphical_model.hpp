@@ -33,28 +33,58 @@ constexpr auto index_of(const Iterable & iterable,  const T & element) {
 
 
 
+template <typename TUPLE>
+constexpr auto tovec(const TUPLE & tuple) { 
+    return boost::hana::transform(tuple, [](auto t) {
+        return boost::hana::type_c<std::vector<typename decltype(t)::type>>;
+    });
+}
 
+template<class T>
+struct FactorHelper;
 
+template<class  ... FUNCTION_TYPES>
+struct FactorHelper<std::tuple<FUNCTION_TYPES ...> >{
 
-
-
-
-template<class VARIABLE_SPACE, class ... FUNCTION_TYPES >
-class GenericDiscreteGraphicalModel : 
-public DiscreteGraphicalModelBase<GenericDiscreteGraphicalModel<VARIABLE_SPACE, FUNCTION_TYPES ... >>{
-
-   
-private:
     template<class FUNCTION_TYPE>
     using Factor= FunctionViewDiscreteFactor<FUNCTION_TYPE> ;
+
     template<class FUNCTION_TYPE>
     using FactorVector = std::vector<Factor<FUNCTION_TYPE>> ;
+
     template<class FUNCTION_TYPE>
     using FunctionVector = std::vector<FUNCTION_TYPE> ;
 
-    typedef boost::hana::tuple< Factor<FUNCTION_TYPES> ...> FactorTuple;
-    typedef boost::hana::tuple< FactorVector<FUNCTION_TYPES> ...> FactorVectorTuple;
+
+    typedef boost::hana::tuple< Factor<FUNCTION_TYPES> ...>         FactorTuple;
+    typedef boost::hana::tuple< FactorVector<FUNCTION_TYPES> ...>   FactorVectorTuple;
     typedef boost::hana::tuple< FunctionVector<FUNCTION_TYPES> ...> FunctionVectorTuple;
+
+    static constexpr auto factorTupleT = boost::hana::tuple_t< Factor<FUNCTION_TYPES> ...> ;
+    static constexpr auto factorVectorTupleT = boost::hana::tuple_t< FactorVector<FUNCTION_TYPES> ...> ;
+    static constexpr auto functionVectorTupleT = boost::hana::tuple_t< FunctionVector<FUNCTION_TYPES> ...> ;
+};
+
+
+template<class VARIABLE_SPACE, class FUNCTION_TYPES_TUPLE >
+class GenericDiscreteGraphicalModel : 
+public DiscreteGraphicalModelBase<GenericDiscreteGraphicalModel<VARIABLE_SPACE, FUNCTION_TYPES_TUPLE >>{
+
+   
+private:
+
+
+
+    typedef  FactorHelper<FUNCTION_TYPES_TUPLE> FactorHelperType;
+
+
+
+
+
+
+    typedef typename FactorHelperType::FactorTuple FactorTuple;
+    typedef typename FactorHelperType::FactorVectorTuple FactorVectorTuple;
+    typedef typename FactorHelperType::FunctionVectorTuple FunctionVectorTuple;
 
 
     template<class FUNCTION>
@@ -91,8 +121,8 @@ public:
     template<class FUNCTION>
     auto add_function(const FUNCTION & f){
 
-        auto t = boost::hana::tuple_t< FunctionVector<FUNCTION_TYPES> ...>;
-        constexpr auto index = index_of(t, boost::hana::type_c< FunctionVector<FUNCTION> >);
+        auto t = FactorHelperType::functionVectorTupleT;
+        constexpr auto index = index_of(t, boost::hana::type_c< typename FactorHelperType:: template FunctionVector<FUNCTION> >);
         const auto i = boost::hana::at(function_vector_tuple_, index).size();
         boost::hana::at(function_vector_tuple_, index).push_back(f);
         return FunctionId<FUNCTION>(i);
@@ -100,8 +130,8 @@ public:
 
     template<class FUNCTION, class VI>
     void add_factor(const FunctionId<FUNCTION> & fid, std::initializer_list<VI> vis){
-        auto t = boost::hana::tuple_t< FunctionVector<FUNCTION_TYPES> ...>;
-        constexpr auto index = index_of(t, boost::hana::type_c< FunctionVector<FUNCTION> >);
+        auto t = FactorHelperType::functionVectorTupleT;
+        constexpr auto index = index_of(t, boost::hana::type_c< typename FactorHelperType:: template FunctionVector<FUNCTION> >);
         const auto & vec = boost::hana::at(function_vector_tuple_, index);
         const auto & function_ref = vec[fid.index()];
         boost::hana::at(factor_vector_tuple_, index).emplace_back(function_ref, vis);
@@ -112,8 +142,6 @@ public:
     template<class FUNCTION, class VI>
     void add_factor(const FUNCTION & function, std::initializer_list<VI> vis){
         // add the function
-        auto t = boost::hana::tuple_t< FunctionVector<FUNCTION_TYPES> ...>;
-        constexpr auto index = index_of(t, boost::hana::type_c< FunctionVector<FUNCTION> >);
         const auto fid = this->add_function(function);
         // add factor
         this->add_factor(fid, vis);

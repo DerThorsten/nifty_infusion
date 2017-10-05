@@ -24,8 +24,7 @@ TEST_CASE("GenericDiscreteGraphicalModel") {
 
         typedef GenericDiscreteGraphicalModel<
             VariableSpaceType,
-            PottsFunctionType,
-            UnaryFunctionType
+            std::tuple<PottsFunctionType,UnaryFunctionType>
         > DiscreteGraphicalModelType;
 
         

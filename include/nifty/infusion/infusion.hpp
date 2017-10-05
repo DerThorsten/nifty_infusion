@@ -4,10 +4,10 @@
 namespace nifty {
 namespace infusion {
 
-
-    inline bool hello_world(){
-        return true;
-    }
+    struct DiscreteTag{};
+    struct ContinuousTag{};
+    struct MixedTag{};
+    
 
 } // end namespace infusion
 }
