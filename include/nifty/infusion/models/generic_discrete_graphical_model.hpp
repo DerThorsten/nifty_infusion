@@ -22,6 +22,12 @@ namespace nifty {
 namespace infusion {
 
 
+
+
+
+
+
+
 template <typename Iterable, typename T>
 constexpr auto index_of(const Iterable & iterable,  const T & element) {
     auto size = decltype(boost::hana::size(iterable)){};
@@ -39,6 +45,13 @@ constexpr auto tovec(const TUPLE & tuple) {
         return boost::hana::type_c<std::vector<typename decltype(t)::type>>;
     });
 }
+
+
+
+
+
+
+
 
 template<class T>
 struct FactorHelper;

@@ -1,6 +1,6 @@
 #include "doctest.h"
 
-#include "nifty/infusion/functions/potts_function.hpp"
+#include "nifty/infusion/functions/value_functions/potts_function.hpp"
 
 
 TEST_CASE("potts-function") {

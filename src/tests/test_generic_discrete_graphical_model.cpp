@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "nifty/infusion/functions/potts_function.hpp"
-#include "nifty/infusion/functions/unary_function.hpp"
+#include "nifty/infusion/functions/value_functions/potts_function.hpp"
+#include "nifty/infusion/functions/value_functions/unary_function.hpp"
 
 #include "nifty/infusion/models/generic_discrete_graphical_model.hpp"
 #include "nifty/infusion/variable_space/simple_discrete_variable_space.hpp"
