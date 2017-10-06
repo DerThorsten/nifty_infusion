@@ -150,7 +150,7 @@ ExternalProject_Add(
     external_nifty_tools
     PREFIX ${CMAKE_BINARY_DIR}/external_projects/nifty_tools
     GIT_REPOSITORY https://github.com/DerThorsten/nifty_tools
-    GIT_TAG 0.1.2
+    GIT_TAG "0.2.1"
     TIMEOUT 5
     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
     CONFIGURE_COMMAND ""
@@ -162,6 +162,28 @@ ExternalProject_Add(
 ExternalProject_Get_Property(external_nifty_tools source_dir)
 set(NIFTY_TOOLS_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for nifty_tools")
 include_directories(${NIFTY_TOOLS_INCLUDE_DIR})
+
+
+
+#---------------------------------------------------
+# nifty_meta
+#---------------------------------------------------
+ExternalProject_Add(
+    external_nifty_meta
+    PREFIX ${CMAKE_BINARY_DIR}/external_projects/nifty_meta
+    GIT_REPOSITORY https://github.com/DerThorsten/nifty_meta
+    GIT_TAG 0.1.0
+    TIMEOUT 5
+    #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    LOG_DOWNLOAD ON
+)
+# Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
+ExternalProject_Get_Property(external_nifty_meta source_dir)
+set(NIFTY_META_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for nifty_meta")
+include_directories(${NIFTY_META_INCLUDE_DIR})
 
 
 #---------------------------------------------------
@@ -303,6 +325,7 @@ add_dependencies(externl_headers
     external_gsl 
     external_xtensor
     external_nifty_tools
+    external_nifty_meta
     external_qpbo
     external_trws
 )

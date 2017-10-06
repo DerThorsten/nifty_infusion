@@ -1,5 +1,7 @@
 #pragma once
 
+#include "nifty/tools/tuple.hpp"
+#include "nifty/meta/tuple.hpp"
 #include "nifty/infusion/models/discrete_graphical_model_base.hpp"
 #include "nifty/infusion/factors/function_view_discrete_factor.hpp"
 
@@ -12,12 +14,6 @@
 #include <vector>
 
 
-#include <boost/hana.hpp>
-
-
-
-
-
 namespace nifty {
 namespace infusion {
 
@@ -28,36 +24,12 @@ namespace infusion {
 
 
 
-template <typename Iterable, typename T>
-constexpr auto index_of(const Iterable & iterable,  const T & element) {
-    auto size = decltype(boost::hana::size(iterable)){};
-    auto dropped = decltype(boost::hana::size(
-        boost::hana::drop_while(iterable, boost::hana::not_equal.to(element))
-    )){};
-    return size - dropped;
-}
+template<class VARIABLE_SPACE, class FUNCTION_TUPLE >
+class GenericDiscreteGraphicalModel : 
+public DiscreteGraphicalModelBase<GenericDiscreteGraphicalModel<VARIABLE_SPACE, FUNCTION_TUPLE >>{
 
-
-
-template <typename TUPLE>
-constexpr auto tovec(const TUPLE & tuple) { 
-    return boost::hana::transform(tuple, [](auto t) {
-        return boost::hana::type_c<std::vector<typename decltype(t)::type>>;
-    });
-}
-
-
-
-
-
-
-
-
-template<class T>
-struct FactorHelper;
-
-template<class  ... FUNCTION_TYPES>
-struct FactorHelper<std::tuple<FUNCTION_TYPES ...> >{
+   
+private:
 
     template<class FUNCTION_TYPE>
     using Factor= FunctionViewDiscreteFactor<FUNCTION_TYPE> ;
@@ -68,36 +40,13 @@ struct FactorHelper<std::tuple<FUNCTION_TYPES ...> >{
     template<class FUNCTION_TYPE>
     using FunctionVector = std::vector<FUNCTION_TYPE> ;
 
-
-    typedef boost::hana::tuple< Factor<FUNCTION_TYPES> ...>         FactorTuple;
-    typedef boost::hana::tuple< FactorVector<FUNCTION_TYPES> ...>   FactorVectorTuple;
-    typedef boost::hana::tuple< FunctionVector<FUNCTION_TYPES> ...> FunctionVectorTuple;
-
-    static constexpr auto factorTupleT = boost::hana::tuple_t< Factor<FUNCTION_TYPES> ...> ;
-    static constexpr auto factorVectorTupleT = boost::hana::tuple_t< FactorVector<FUNCTION_TYPES> ...> ;
-    static constexpr auto functionVectorTupleT = boost::hana::tuple_t< FunctionVector<FUNCTION_TYPES> ...> ;
-};
-
-
-template<class VARIABLE_SPACE, class FUNCTION_TYPES_TUPLE >
-class GenericDiscreteGraphicalModel : 
-public DiscreteGraphicalModelBase<GenericDiscreteGraphicalModel<VARIABLE_SPACE, FUNCTION_TYPES_TUPLE >>{
-
-   
+    typedef FUNCTION_TUPLE FunctionTuple;
+public:
+    typedef typename meta::TransformTuple<FunctionTuple, Factor >::type FactorTuple;
 private:
+    typedef typename meta::TransformTuple<FunctionTuple, FactorVector >::type FactorVectorTuple;
+    typedef typename meta::TransformTuple<FunctionTuple, FunctionVector >::type FunctionVectorTuple;
 
-
-
-    typedef  FactorHelper<FUNCTION_TYPES_TUPLE> FactorHelperType;
-
-
-
-
-
-
-    typedef typename FactorHelperType::FactorTuple FactorTuple;
-    typedef typename FactorHelperType::FactorVectorTuple FactorVectorTuple;
-    typedef typename FactorHelperType::FunctionVectorTuple FunctionVectorTuple;
 
 
     template<class FUNCTION>
@@ -134,22 +83,45 @@ public:
     template<class FUNCTION>
     auto add_function(const FUNCTION & f){
 
-        auto t = FactorHelperType::functionVectorTupleT;
-        constexpr auto index = index_of(t, boost::hana::type_c< typename FactorHelperType:: template FunctionVector<FUNCTION> >);
-        const auto i = boost::hana::at(function_vector_tuple_, index).size();
-        boost::hana::at(function_vector_tuple_, index).push_back(f);
-        return FunctionId<FUNCTION>(i);
+        // find index of function
+        typedef meta::TupleTypeIndex<FUNCTION, FunctionTuple> TupleIndex;
+
+        // get the function vector
+        auto & vec = std::get<TupleIndex::value>(function_vector_tuple_);
+
+        // index of the function
+        const auto f_index = vec.size();
+
+        // add function
+        vec.push_back(f);
+
+        // return function identifier 
+        return FunctionId<FUNCTION>(f_index);
     }
 
     template<class FUNCTION, class VI>
     void add_factor(const FunctionId<FUNCTION> & fid, std::initializer_list<VI> vis){
-        auto t = FactorHelperType::functionVectorTupleT;
-        constexpr auto index = index_of(t, boost::hana::type_c< typename FactorHelperType:: template FunctionVector<FUNCTION> >);
-        const auto & vec = boost::hana::at(function_vector_tuple_, index);
-        const auto & function_ref = vec[fid.index()];
-        boost::hana::at(factor_vector_tuple_, index).emplace_back(function_ref, vis);
-        max_arity_ = std::max(max_arity_, ArityType(function_ref.arity()));
+
+
+
+        // find index of function
+        typedef meta::TupleTypeIndex<FUNCTION, FunctionTuple> TupleIndex;
+
+        // get the function vector
+        const auto & function_vec = std::get<TupleIndex::value>(function_vector_tuple_);
+
+        // get the function
+        const auto & function = function_vec[fid.index()];
+
+        // add factor
+        std::get<TupleIndex::value>(factor_vector_tuple_).emplace_back(function, vis);
+
+        // update max arity
+        max_arity_ = std::max(max_arity_, ArityType(function.arity()));
+
     }
+
+
 
 
     template<class FUNCTION, class VI>
@@ -162,9 +134,16 @@ public:
 
 
 
+
+    template<std::size_t TUPLE_INDEX>
+    const auto & get_value_factor(const uint64_t i)const{
+        return std::get<TUPLE_INDEX>(factor_vector_tuple_)[i];
+    }
+
+
     template<class F>
     void for_each_factor(F && f)const{
-        boost::hana::for_each(factor_vector_tuple_, [&](auto && factor_vector) {
+        nifty::tools::for_each(factor_vector_tuple_, [&](auto && factor_vector) {
             for(const auto & factor : factor_vector){
                 f(factor);
             }
