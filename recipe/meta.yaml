@@ -1,0 +1,45 @@
+{% set name = "nifty-infusion" %}
+{% set version = "0.1.0" %}
+#{% set sha256 = "b2ada6f86faf5c9032e8b1a7b8cc0dff68a229e90ad80b366f5564fec03caa17" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  path: ../
+  #fn: nifty_infusion-{{ version }}.tar.gz
+  #url: https://github.com/DerThorsten/nifty_infusion/archive/{{ version }}.tar.gz
+  #sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - toolchain
+    - cmake
+    - boost-cpp
+    - qpbo
+
+test:
+  commands:
+    - test -d ${PREFIX}/include/nifty/          # [unix]
+    - test -d ${PREFIX}/include/nifty/infusion  # [unix]
+    - test -f ${PREFIX}/include/nifty_infusion/infusion.hpp  # [unix]
+    - if exist %LIBRARY_PREFIX%\include\nifty\infusion\infusion.hpp (exit 0) else (exit 1)  # [win]
+
+
+about:
+  home: https://github.com/DerThorsten/nifty_infusion
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: 'nifty-infusion'
+  description: 'nifty-infusion'
+  documentation_url:  https://github.com/DerThorsten/nifty_infusion
+  dev_url: https://github.com/DerThorsten/nifty_infusion
+
+extra:
+  recipe-maintainers:
+    - DerThorsten
