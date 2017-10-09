@@ -37,7 +37,7 @@ public:
     auto arity()const{
         return 2;
     }
-    template<class LABELS>
+    template<class LABELS,typename std::enable_if<!std::is_integral<LABELS>::value,int>::type = 0>
     auto operator()(const LABELS & labels)const{
         return labels[0] != labels[1] ? beta_ : 0.0f;
     }
@@ -66,7 +66,7 @@ public:
     constexpr auto arity()const{
         return 2;
     }
-    template<class LABELS>
+    template<class LABELS,typename std::enable_if<!std::is_integral<LABELS>::value,int>::type = 0>
     auto operator()(const LABELS & labels)const{
         return labels[0] != labels[1] ? beta_ : 0.0f;
     }
