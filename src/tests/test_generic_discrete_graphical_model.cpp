@@ -6,7 +6,9 @@
 #include "nifty/infusion/functions/value_functions/unary_function.hpp"
 
 #include "nifty/infusion/models/generic_discrete_graphical_model.hpp"
+#include "nifty/infusion/models/factors_of_variables.hpp"
 #include "nifty/infusion/variable_space/simple_discrete_variable_space.hpp"
+
 
 TEST_CASE("GenericDiscreteGraphicalModel") {
 
@@ -61,9 +63,13 @@ TEST_CASE("GenericDiscreteGraphicalModel") {
 
         // evaluates
         std::vector<int> labels = {0,0,0,0};
-
         auto val = gm.eval_factors(labels);
-       
+
+
+        // factors of variables
+        typedef FactorsOfVariables<DiscreteGraphicalModelType> FactorsOfVariablesType;
+        
+        FactorsOfVariablesType factorsOfVariables(gm);
          
     }
 

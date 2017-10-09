@@ -17,13 +17,6 @@ public:
         return this->derived_cast().n_variables();
     }
 
-    auto variables_begin()const{
-        return this->derived_cast().n_variables();
-    }
-    auto variables_end()const{
-        return this->derived_cast().n_variables();
-    }
-
     auto n_labels(const VariableIndexType i)const{
         return this->derived_cast().n_labels(i);
     }

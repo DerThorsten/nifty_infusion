@@ -19,7 +19,7 @@ public:
 
     // must have
     auto n_variables() const {
-        
+        return this->derived_cast().variable_space().n_variables();
     }
 
 

@@ -2,6 +2,7 @@
 
 #include "nifty/tools/tuple.hpp"
 #include "nifty/meta/tuple.hpp"
+#include "nifty/infusion/models/factor_index.hpp"
 #include "nifty/infusion/models/discrete_graphical_model_base.hpp"
 #include "nifty/infusion/factors/function_view_discrete_factor.hpp"
 
@@ -16,9 +17,6 @@
 
 namespace nifty {
 namespace infusion {
-
-
-
 
 
 
@@ -57,6 +55,9 @@ private:
         }
         auto index()const{
             return index_;
+        }
+        bool operator<(const FunctionId & other)const{
+            return index_ < other.index_;
         }
     private:
         uint64_t index_;
@@ -135,22 +136,34 @@ public:
 
 
 
-    template<std::size_t TUPLE_INDEX>
-    const auto & get_value_factor(const uint64_t i)const{
-        return std::get<TUPLE_INDEX>(factor_vector_tuple_)[i];
+    template<std::uint64_t TUPLE_INDEX>
+    const auto & operator[](const FactorIndex<TUPLE_INDEX> & factor_index)const{
+        return std::get<TUPLE_INDEX>(factor_vector_tuple_)[factor_index.index()];
     }
 
 
     template<class F>
     void for_each_factor(F && f)const{
-        nifty::tools::for_each(factor_vector_tuple_, [&](auto && factor_vector) {
-            for(const auto & factor : factor_vector){
-                f(factor);
+
+        // loop over each tuple element
+        nifty::tools::for_each(factor_vector_tuple_,
+         [&](auto && factor_vector) {
+
+
+            typedef std::decay_t<decltype(factor_vector)> FactorVectorType;
+            typedef meta::TupleTypeIndex<FactorVectorType, FactorVectorTuple> TupleIndex;
+            typedef FactorIndex<TupleIndex::value> FactorIndexType;
+
+            for(uint64_t i=0; i<factor_vector.size(); ++i){
+                f(FactorIndexType(i), factor_vector[i]);
             }
+
         });
     }
 
-
+    const auto & variable_space()const{
+        return variable_space_;
+    }
     
 private:
     VariableSpaceType   variable_space_; 

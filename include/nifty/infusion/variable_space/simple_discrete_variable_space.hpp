@@ -17,14 +17,14 @@ public:
 
     // must have
     auto n_variables()const{
-        return this->derived_cast().n_variables();
+        return n_variables_;
     }
 
     auto n_labels(const VariableIndexType i)const{
         return NUMBER_OF_LABELS;
     }
-    
-     NVariablesType n_variables_;
+private:
+    NVariablesType n_variables_;
 };
 
 

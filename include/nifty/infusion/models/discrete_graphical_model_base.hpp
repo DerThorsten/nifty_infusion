@@ -20,7 +20,7 @@ public:
         const auto size =d.max_arity();
         std::vector<DiscreteLabelType> flabels(size);
         auto val = 0.0;
-        d.for_each_factor([&](auto && factor){
+        d.for_each_factor([&](auto && index, auto && factor){
             auto && var_set = factor.variables_set();
             auto i = 0;
             for(auto var : var_set){

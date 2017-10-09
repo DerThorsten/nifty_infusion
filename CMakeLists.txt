@@ -51,6 +51,16 @@ file(GLOB_RECURSE headers include/*.hxx)
 include_directories(include)
 
 
+
+
+#-------------------------------------------------------------------------------------------------------------------
+# threading package
+#-------------------------------------------------------------------------------------------------------------------
+find_package(QPBO REQUIRED)
+include_directories(${QPBO_INCLUDE_DIRS})
+
+
+
 #-------------------------------------------------------------------------------------------------------------------
 # external projects which need to be in the `include tree`
 #-------------------------------------------------------------------------------------------------------------------
@@ -172,7 +182,7 @@ ExternalProject_Add(
     external_nifty_meta
     PREFIX ${CMAKE_BINARY_DIR}/external_projects/nifty_meta
     GIT_REPOSITORY https://github.com/DerThorsten/nifty_meta
-    GIT_TAG 0.1.0
+    GIT_TAG "0.3.0"
     TIMEOUT 5
     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
     CONFIGURE_COMMAND ""
@@ -186,25 +196,25 @@ set(NIFTY_META_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to includ
 include_directories(${NIFTY_META_INCLUDE_DIR})
 
 
-#---------------------------------------------------
-# qpbo 
-#---------------------------------------------------
-ExternalProject_Add(
-    external_qpbo
-    PREFIX ${CMAKE_BINARY_DIR}/external_projects/qpbo
-    GIT_REPOSITORY https://github.com/DerThorsten/qpbo
-    GIT_TAG "0.2.2"
-    TIMEOUT 5
-    #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    LOG_DOWNLOAD ON
-)
-# Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-ExternalProject_Get_Property(external_qpbo source_dir)
-set(QPBO_ROOT_DIR ${source_dir}/ CACHE INTERNAL "Path to include folder for qpbo")
-include_directories(${QPBO_ROOT_DIR})
+# #---------------------------------------------------
+# # qpbo 
+# #---------------------------------------------------
+# ExternalProject_Add(
+#     external_qpbo
+#     PREFIX ${CMAKE_BINARY_DIR}/external_projects/qpbo
+#     GIT_REPOSITORY https://github.com/DerThorsten/qpbo
+#     GIT_TAG "0.2.2"
+#     TIMEOUT 5
+#     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
+#     CONFIGURE_COMMAND ""
+#     BUILD_COMMAND ""
+#     INSTALL_COMMAND ""
+#     LOG_DOWNLOAD ON
+# )
+# # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
+# ExternalProject_Get_Property(external_qpbo source_dir)
+# set(QPBO_ROOT_DIR ${source_dir}/ CACHE INTERNAL "Path to include folder for qpbo")
+# include_directories(${QPBO_ROOT_DIR})
 
 #---------------------------------------------------
 # trws 
@@ -326,7 +336,7 @@ add_dependencies(externl_headers
     external_xtensor
     external_nifty_tools
     external_nifty_meta
-    external_qpbo
+    # external_qpbo
     external_trws
 )
 
