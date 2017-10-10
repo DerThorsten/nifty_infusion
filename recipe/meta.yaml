@@ -22,7 +22,7 @@ requirements:
     - boost-cpp
     - qpbo >=0.3.9
     - nifty-meta >=0.5.3
-    - nifty-tools >=0.3.3
+    - nifty-tools >=0.3.5
   run:
     - qpbo >=0.3.9
     
@@ -32,7 +32,7 @@ test:
     - test -d ${PREFIX}/include/nifty/infusion  # [unix]
     - test -f ${PREFIX}/include/nifty_infusion/infusion.hpp  # [unix]
     - if exist %LIBRARY_PREFIX%\include\nifty\infusion\infusion.hpp (exit 0) else (exit 1)  # [win]
-
+    - ./src/test/test_nifty_infuison # [unix]
 
 about:
   home: https://github.com/DerThorsten/nifty_infusion

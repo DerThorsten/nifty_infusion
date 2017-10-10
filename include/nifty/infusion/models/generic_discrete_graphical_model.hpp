@@ -6,9 +6,6 @@
 #include "nifty/infusion/models/discrete_graphical_model_base.hpp"
 #include "nifty/infusion/factors/function_view_discrete_factor.hpp"
 
-
-#include <boost/hana.hpp>
-
 #include <cstdint>
 #include <iostream>
 #include <array>
