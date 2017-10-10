@@ -20,8 +20,12 @@ requirements:
     - toolchain
     - cmake
     - boost-cpp
-    - qpbo
-
+    - qpbo >=0.3.9
+    - nifty-meta >=0.5.3
+    - nifty-tools >=0.3.3
+  run:
+    - qpbo >=0.3.9
+    
 test:
   commands:
     - test -d ${PREFIX}/include/nifty/          # [unix]

@@ -73,5 +73,37 @@ namespace infusion {
     };
 
 
+
+
+    template<class GM>
+    class FactorsOfVariablesSet{
+        
+    public:
+        
+        typedef GM GraphicalModelType;
+        typedef FactorsOfVariables<GraphicalModelType> FactorsOfVariablesType;
+
+        FactorsOfVariablesSet(
+            const GraphicalModelType & gm, 
+            const FactorsOfVariablesType & factors_of_variables
+        )
+        :   gm_(gm),
+            factors_of_variables_(factors_of_variables)
+        {
+
+        }
+
+
+        
+
+    private:    
+        const GraphicalModelType & gm_;
+        const FactorsOfVariablesType & factors_of_variables_;
+
+    };
+
+
+
+
 }
 }

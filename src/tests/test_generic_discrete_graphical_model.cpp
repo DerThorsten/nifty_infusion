@@ -9,6 +9,8 @@
 #include "nifty/infusion/models/factors_of_variables.hpp"
 #include "nifty/infusion/variable_space/simple_discrete_variable_space.hpp"
 
+#include "nifty/infusion/factors/heterogeneous_container.hpp"
+
 
 TEST_CASE("GenericDiscreteGraphicalModel") {
 
@@ -70,7 +72,24 @@ TEST_CASE("GenericDiscreteGraphicalModel") {
         typedef FactorsOfVariables<DiscreteGraphicalModelType> FactorsOfVariablesType;
         
         FactorsOfVariablesType factorsOfVariables(gm);
-         
+
+
+
+
+        // 
+        {
+            HeterogeneousFlatFactorIndexSet<DiscreteGraphicalModelType> factor_index_set;
+            gm.for_each_factor([&](auto && factor_index, auto && factor){
+                factor_index_set.insert(factor_index);
+            });
+
+
+            // do stuff
+            factor_index_set.for_each([&](auto && factor_index){
+                auto && f = gm[factor_index].function();
+                const auto a = f.arity();
+            });
+        }
     }
 
     

@@ -28,6 +28,11 @@ namespace infusion {
         struct Parameters{
             int reserve_edges{0}; 
             bool enforce_skip_merge_parallel_edges{false};
+
+            bool probeing{false};
+            int  n_improve{0};
+            bool strong_persistency{false};
+
         };
 
         Qpbo(

@@ -11,7 +11,6 @@
 
 
 namespace nifty {
-#pragma once
 namespace infusion {
 
 

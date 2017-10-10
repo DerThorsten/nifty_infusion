@@ -11,12 +11,12 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif(BUILD_TESTS)
 
-#---------------------------------------
-# documentation folder
-#---------------------------------------
-if(BUILD_DOCS)
-    add_subdirectory(docs)
-endif(BUILD_DOCS)
+# #---------------------------------------
+# # documentation folder
+# #---------------------------------------
+# if(BUILD_DOCS)
+#     add_subdirectory(docs)
+# endif(BUILD_DOCS)
 
 
 #---------------------------------------

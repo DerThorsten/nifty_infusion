@@ -1,18 +1,36 @@
 cmake_minimum_required(VERSION 3.1)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
-SET(PROJECT_NAME "nifty_infusion")
-project(nifty_infusion)
 
+project(NIFTY_INFUSION)
+set(${PROJECT_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-
-
-include(CheckCXXCompilerFlag)
+#-------------------------------------------------------------------------------------------------------------------
+# Version
+#-------------------------------------------------------------------------------------------------------------------
+# as seen in the github.com/QuantStack/xtensor
+file(STRINGS "${${PROJECT_NAME}_INCLUDE_DIR}/nifty/infusion/infusion_config.hpp" ${PROJECT_NAME}_version_defines
+     REGEX "#define ${PROJECT_NAME}_VERSION_(MAJOR|MINOR|PATCH)")
+foreach(ver ${${PROJECT_NAME}_version_defines})
+    if(ver MATCHES "#define ${PROJECT_NAME}_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
+        set(${PROJECT_NAME}_VERSION_${CMAKE_MATCH_1} "${CMAKE_MATCH_2}" CACHE INTERNAL "")
+    endif()
+endforeach()
+set(${PROJECT_NAME}_VERSION 
+    ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH})
+message(STATUS "${PROJECT_NAME} v${${PROJECT_NAME}_VERSION}")
 
 
 SET(BUILD_TESTS    ON CACHE BOOL "Build the test suite ?"   FORCE)
 SET(BUILD_DOCS     ON CACHE BOOL "Build the documentation?" FORCE)
 SET(BUILD_EXAMPLES ON CACHE BOOL "Build the examples?"      FORCE)
+
+
+
+
+
+
+
 
 #-------------------------------------------------------------------------------------------------------------------
 # cmake packages
@@ -22,7 +40,7 @@ include(ExternalProject)
 #-------------------------------------------------------------------------------------------------------------------
 # check for c++ 14 support
 #-------------------------------------------------------------------------------------------------------------------
-
+include(CheckCXXCompilerFlag)
 # FIXME c++14 checks are broken???
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     CHECK_CXX_COMPILER_FLAG("-std=c++14" HAS_CPP14_FLAG)
@@ -51,7 +69,18 @@ file(GLOB_RECURSE headers include/*.hxx)
 include_directories(include)
 
 
+#---------------------------------------------------
+# NIFTY_META
+#---------------------------------------------------
+find_package(NIFTY_META REQUIRED)
+include_directories(${NIFTY_META_INCLUDE_DIRS})
 
+
+#---------------------------------------------------
+# NIFTY_TOOLS
+#---------------------------------------------------
+find_package(NIFTY_TOOLS REQUIRED)
+include_directories(${NIFTY_TOOLS_INCLUDE_DIRS})
 
 
 #---------------------------------------------------
@@ -59,148 +88,6 @@ include_directories(include)
 #---------------------------------------------------
 find_package(QPBO REQUIRED)
 include_directories(${QPBO_INCLUDE_DIRS})
-
-#---------------------------------------------------
-# Boost
-#---------------------------------------------------
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-
-
-
-
-#---------------------------------------------------------
-# external projects which need to be in the `include tree`
-#---------------------------------------------------------
-
-
-
-# #---------------------------------------------------
-# # GSL: Guideline Support Library  
-# #---------------------------------------------------
-# ExternalProject_Add(
-#     external_gsl
-#     PREFIX ${CMAKE_BINARY_DIR}/external_projects/GSL
-#     GIT_REPOSITORY https://github.com/Microsoft/GSL
-#     GIT_TAG b01450878b39307df9abb702f02ce8c1d6c9ee30
-#     TIMEOUT 5
-#     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-#     CONFIGURE_COMMAND ""
-#     BUILD_COMMAND ""
-#     INSTALL_COMMAND ""
-#     LOG_DOWNLOAD ON
-# )
-# # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-# ExternalProject_Get_Property(external_gsl source_dir)
-# set(GSL_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for GSL")
-# include_directories(${GSL_INCLUDE_DIR})
-
-
-
-# #---------------------------------------------------
-# # xtensor 
-# #---------------------------------------------------
-# ExternalProject_Add(
-#     external_xtensor
-#     PREFIX ${CMAKE_BINARY_DIR}/external_projects/xtensor
-#     GIT_REPOSITORY https://github.com/QuantStack/xtensor
-#     GIT_TAG 0.10.7
-#     TIMEOUT 5
-#     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-#     CONFIGURE_COMMAND ""
-#     BUILD_COMMAND ""
-#     INSTALL_COMMAND ""
-#     LOG_DOWNLOAD ON
-# )
-# # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-# ExternalProject_Get_Property(external_xtensor source_dir)
-# set(XTENSOR_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for xtensor")
-# include_directories(${XTENSOR_INCLUDE_DIR})
-
-
-
-#---------------------------------------------------
-# nifty_tools 
-#---------------------------------------------------
-ExternalProject_Add(
-    external_nifty_tools
-    PREFIX ${CMAKE_BINARY_DIR}/external_projects/nifty_tools
-    GIT_REPOSITORY https://github.com/DerThorsten/nifty_tools
-    GIT_TAG "0.2.1"
-    TIMEOUT 5
-    #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    LOG_DOWNLOAD ON
-)
-# Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-ExternalProject_Get_Property(external_nifty_tools source_dir)
-set(NIFTY_TOOLS_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for nifty_tools")
-include_directories(${NIFTY_TOOLS_INCLUDE_DIR})
-
-
-
-#---------------------------------------------------
-# nifty_meta
-#---------------------------------------------------
-ExternalProject_Add(
-    external_nifty_meta
-    PREFIX ${CMAKE_BINARY_DIR}/external_projects/nifty_meta
-    GIT_REPOSITORY https://github.com/DerThorsten/nifty_meta
-    GIT_TAG "0.3.0"
-    TIMEOUT 5
-    #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    LOG_DOWNLOAD ON
-)
-# Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-ExternalProject_Get_Property(external_nifty_meta source_dir)
-set(NIFTY_META_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for nifty_meta")
-include_directories(${NIFTY_META_INCLUDE_DIR})
-
-
-# #---------------------------------------------------
-# # qpbo 
-# #---------------------------------------------------
-# ExternalProject_Add(
-#     external_qpbo
-#     PREFIX ${CMAKE_BINARY_DIR}/external_projects/qpbo
-#     GIT_REPOSITORY https://github.com/DerThorsten/qpbo
-#     GIT_TAG "0.2.2"
-#     TIMEOUT 5
-#     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-#     CONFIGURE_COMMAND ""
-#     BUILD_COMMAND ""
-#     INSTALL_COMMAND ""
-#     LOG_DOWNLOAD ON
-# )
-# # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-# ExternalProject_Get_Property(external_qpbo source_dir)
-# set(QPBO_ROOT_DIR ${source_dir}/ CACHE INTERNAL "Path to include folder for qpbo")
-# include_directories(${QPBO_ROOT_DIR})
-
-# #---------------------------------------------------
-# # trws 
-# #---------------------------------------------------
-# ExternalProject_Add(
-#     external_trws
-#     PREFIX ${CMAKE_BINARY_DIR}/external_projects/trws
-#     GIT_REPOSITORY https://github.com/DerThorsten/PyTrw
-#     GIT_TAG 0.1.0
-#     TIMEOUT 5
-#     #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-#     CONFIGURE_COMMAND ""
-#     BUILD_COMMAND ""
-#     INSTALL_COMMAND ""
-#     LOG_DOWNLOAD ON
-# )
-# # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-# ExternalProject_Get_Property(external_trws source_dir)
-# set(TRWS_ROOT_DIR ${source_dir}/trw/src/core CACHE INTERNAL "Path to include folder for trws")
-# include_directories(${TRWS_ROOT_DIR})
 
 
 if(FALSE)
@@ -296,14 +183,14 @@ endif()
 
 # meta target for all to handle dependencies
 add_custom_target(externl_headers)
-add_dependencies(externl_headers
-    #external_boost_header_only
-    #external_gsl 
-    #external_xtensor
-    external_nifty_tools
-    external_nifty_meta
+# add_dependencies(externl_headers
+#     #external_boost_header_only
+#     #external_gsl 
+#     #external_xtensor
+#     #external_nifty_tools
+#     #external_nifty_meta
 
-)
+# )
 
 
 
@@ -323,3 +210,33 @@ endif()
 #-------------------------------------------------------------------------------------------------------------------
 add_subdirectory(src)
 
+
+
+
+
+#------------------------------------------------------------------------------------------------------------------
+# install
+#-------------------------------------------------------------------------------------------------------------------
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+
+install(DIRECTORY  ${${PROJECT_NAME}_INCLUDE_DIR}/nifty/infusion
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nifty)
+
+
+set(${PROJECT_NAME}_CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}" CACHE
+    STRING "install path for ${PROJECT_NAME}Config.cmake")
+
+configure_package_config_file(${PROJECT_NAME}Config.cmake.in
+                              "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                              INSTALL_DESTINATION ${${PROJECT_NAME}_CMAKECONFIG_INSTALL_DIR})
+
+
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+                                 VERSION ${${PROJECT_NAME}_VERSION}
+                                 COMPATIBILITY AnyNewerVersion)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+        DESTINATION ${${PROJECT_NAME}_CMAKECONFIG_INSTALL_DIR})
