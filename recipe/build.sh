@@ -35,5 +35,6 @@ cmake  \
     -DBoost_INCLUDE_DIRS="${PREFIX}/include" 
 
 make -j${CPU_COUNT}
-
+./src/tests/test_nifty_infusion
+make test
 make install

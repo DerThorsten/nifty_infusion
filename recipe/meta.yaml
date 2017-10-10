@@ -30,9 +30,8 @@ test:
   commands:
     - test -d ${PREFIX}/include/nifty/          # [unix]
     - test -d ${PREFIX}/include/nifty/infusion  # [unix]
-    - test -f ${PREFIX}/include/nifty_infusion/infusion.hpp  # [unix]
+    - test -f ${PREFIX}/include/nifty/infusion/infusion.hpp  # [unix]
     - if exist %LIBRARY_PREFIX%\include\nifty\infusion\infusion.hpp (exit 0) else (exit 1)  # [win]
-    - ./src/test/test_nifty_infuison # [unix]
 
 about:
   home: https://github.com/DerThorsten/nifty_infusion
