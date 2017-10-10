@@ -24,6 +24,7 @@ typedef std::uint64_t     DiscreteLabelType;
 typedef std::uint64_t     VariableIndexType;
 typedef std::uint64_t     ArityType;
 typedef DiscreteLabelType NLabelsType;
+typedef DiscreteLabelType NDisceteLabelsType;
 typedef VariableIndexType NVariablesType;
 struct NoneType{};
 

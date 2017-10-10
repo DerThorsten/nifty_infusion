@@ -23,18 +23,22 @@ class UnaryFunction;
 
 template<>
 class UnaryFunction<0>
-:   public DiscreteValueFunctionBase<UnaryFunction<0>>
+:   public  DiscreteValueFunctionBase<UnaryFunction<0>>,
+    public std::vector<float>
 {
-    typedef DiscreteValueFunctionBase<UnaryFunction<0>> BaseType;
+    typedef DiscreteValueFunctionBase<UnaryFunction<0>> DiscreteValueFunctionBaseType;
+    typedef std::vector<float> VectorBaseType;
     
 public:
-    using BaseType::operator();
-    UnaryFunction(const NLabelsType n_labels=2)
-    :   values_(n_labels, 0.0f){
-    }
+    using DiscreteValueFunctionBaseType::operator();
+    using VectorBaseType::VectorBaseType;
+
+    //UnaryFunction(const NLabelsType n_labels=2)
+    //:   values_(n_labels, 0.0f){
+    //}
 
     auto n_labels(std::size_t i)const{
-        return values_.size();
+        return this->size();
     }
     auto arity()const{
         return 1;
@@ -42,32 +46,35 @@ public:
 
     template<class LABELS,typename std::enable_if<!std::is_integral<LABELS>::value,int>::type = 0>
     auto operator()(const LABELS & labels)const{
-        return values_[labels[0]];
+        return this->operator[](labels[0]);
     }
 
 private:
-    std::vector<float> values_;
+    //std::vector<float> values_;
     
 };
 
 
 template<NLabelsType N_LABELS>
 class UnaryFunction
-:   public DiscreteValueFunctionBase<UnaryFunction<N_LABELS>>
+:   public DiscreteValueFunctionBase<UnaryFunction<N_LABELS>>,
+    public std::array<float, N_LABELS>
 {
-    typedef DiscreteValueFunctionBase<UnaryFunction<N_LABELS>> BaseType;
+    typedef DiscreteValueFunctionBase<UnaryFunction<N_LABELS>> DiscreteValueFunctionBaseType;
+    typedef std::array<float, N_LABELS> ArrayBaseType;
     
 public:
-    using BaseType::operator();
+    using DiscreteValueFunctionBaseType::operator();
 
     UnaryFunction()
-    :   values_(){
+    :   ArrayBaseType(){
     }
 
     UnaryFunction(std::initializer_list<float> values)
-    :   values_(){
-        NIFTY_CHECK_OP(values.size(),==, N_LABELS, "invalid size");
-        std::copy(values.begin(), values.end(), values_.begin());
+    :   ArrayBaseType()
+    {
+        NIFTY_CHECK_OP(this->size(),==, N_LABELS, "invalid size");
+        std::copy(this->begin(), this->end(), values_.begin());
     }
 
     constexpr auto n_labels(std::size_t i)const{
@@ -78,7 +85,7 @@ public:
     }
     template<class LABELS,typename std::enable_if<!std::is_integral<LABELS>::value,int>::type = 0>
     auto operator()(const LABELS & labels)const{
-        return values_[labels[0]];
+        return this->operator[](labels[0]);
     }
 private:
     std::array<float, N_LABELS> values_;

@@ -86,7 +86,9 @@ namespace infusion {
         }
 
 
-        void optimize(std::vector<DiscreteLabelType> & result){
+
+        template<class RESULT>
+        void optimize(RESULT & result){
 
             if(might_need_parallel_edge_merging_ && ! parameters_.enforce_skip_merge_parallel_edges){
                 internal_qpbo_->MergeParallelEdges();
@@ -96,6 +98,21 @@ namespace infusion {
                 internal_qpbo_->Solve();
             }
 
+            for(auto vi=0; vi<n_variables_; ++vi){
+                auto l = internal_qpbo_->GetLabel(vi);
+                if(l==0 || l==1){
+                    result[vi] = l;
+                }
+                else{
+                    result[vi] = 0;
+                }
+            }
+        }
+
+        auto optimize(){
+            std::vector<DiscreteLabelType>  result(n_variables_);
+            this->optimize(result);
+            return result;
         }
 
 
