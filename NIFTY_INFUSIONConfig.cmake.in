@@ -10,16 +10,28 @@
 
 set(PN NIFTY_INFUSION)
 
-set_and_check(${PN}_INCLUDE_DIR   
-    "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
+find_package(AD3 REQUIRED)
+find_package(QPBO REQUIRED)
+find_package(NIFTY_TOOLS REQUIRED)
+find_package(NIFTY_META REQUIRED)
 
-set_and_check(${PN}_INCLUDE_DIRS  
+
+set_and_check(${PN}_INCLUDE_DIR   
     "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@"
 )
 
+set_and_check(${PN}_INCLUDE_DIRS  
+    "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@"
+    ${AD3_INCLUDE_DIRS}
+    ${QPBO_INCLUDE_DIRS}
+    ${NIFTY_META_INCLUDE_DIRS}
+    ${NIFTY_TOOLS_INCLUDE_DIRS}
+)
+
 set(${PN}_LIBRARY "")
-set(${PN}_INFUSION_LIBRARIES "")
+set(${PN}_LIBRARIES 
+    ${AD3_LIBRARY}
+    ${QPBO_LIBRARY}
+)
 check_required_components(${PN})
-
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})

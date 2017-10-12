@@ -69,57 +69,34 @@ file(GLOB_RECURSE headers include/*.hxx)
 include_directories(include)
 
 
+find_package(NIFTY_INFUSION_EXTERNALS REQUIRED)
+include_directories(${NIFTY_INFUSION_EXTERNALS_INCLUDE_DIRS})
+
 SET(NIFTY_EXTERNAL_LIBRARIES "")
 SET(NIFTY_EXTERNAL_INCLUDE_DIRS "")
+
+
+
+#---------------------------------------------------
+# xtensor
+#---------------------------------------------------
+find_package(xtensor REQUIRED)
+include_directories(${xtensor_INCLUDE_DIRS})
 
 #---------------------------------------------------
 # NIFTY_META
 #---------------------------------------------------
 find_package(NIFTY_META REQUIRED)
-SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
-    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
-    ${NIFTY_META_INCLUDE_DIRS}
-)
+include_directories(${NIFTY_META_INCLUDE_DIRS})
 
 
 #---------------------------------------------------
 # NIFTY_TOOLS
 #---------------------------------------------------
 find_package(NIFTY_TOOLS REQUIRED)
-SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
-    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
-    ${NIFTY_TOOLS_INCLUDE_DIRS}
-)
+include_directories(${NIFTY_TOOLS_INCLUDE_DIRS})
 
-#---------------------------------------------------
-# QPBO
-#---------------------------------------------------
-find_package(QPBO REQUIRED)
-# include_directories(${QPBO_INCLUDE_DIRS})
-SET(NIFTY_EXTERNAL_LIBRARIES 
-    ${NIFTY_EXTERNAL_LIBRARIES}
-    ${QPBO_LIBRARY}
-)
-SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
-    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
-    ${QPBO_INCLUDE_DIRS}
-)
 
-#---------------------------------------------------
-# AD3
-#---------------------------------------------------
-find_package(AD3 REQUIRED)
-# include_directories(${AD3_INCLUDE_DIRS})
-SET(NIFTY_EXTERNAL_LIBRARIES 
-    ${NIFTY_EXTERNAL_LIBRARIES}
-    ${AD3_LIBRARY}
-)
-SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
-    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
-    ${AD3_INCLUDE_DIRS}
-)
-
-include_directories(${NIFTY_EXTERNAL_INCLUDE_DIRS})
 if(FALSE)
 
     #---------------------------------------------------
@@ -264,8 +241,8 @@ configure_package_config_file(${PROJECT_NAME}Config.cmake.in
 
 
 install(FILES 
-        cmake/modules/FindAD3.cmake
-        cmake/modules/FindQPBO.cmake
+        #cmake/modules/FindAD3.cmake
+        #cmake/modules/FindQPBO.cmake
         cmake/modules/FindNIFTY_INFUSION_EXTERNALS.cmake
         DESTINATION  ${${PROJECT_NAME}_CMAKECONFIG_INSTALL_DIR})
 

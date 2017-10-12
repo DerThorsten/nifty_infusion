@@ -1,5 +1,5 @@
 {% set name = "nifty-infusion" %}
-{% set version = "0.1.3" %}
+{% set version = "0.1.7" %}
 #{% set sha256 = "b2ada6f86faf5c9032e8b1a7b8cc0dff68a229e90ad80b366f5564fec03caa17" %}
 
 package:
@@ -20,10 +20,11 @@ requirements:
     - toolchain
     - cmake
     - boost-cpp
-    - qpbo >=0.3.9
-    - ad3-cpp >=2.5.1
+    - qpbo >=0.3.10
+    - ad3-cpp >=2.5.3
     - nifty-meta >=0.5.3
     - nifty-tools >=0.3.5
+    - xtensor
   run:
     - qpbo >=0.3.9
     - ad3-cpp >=2.5.1
