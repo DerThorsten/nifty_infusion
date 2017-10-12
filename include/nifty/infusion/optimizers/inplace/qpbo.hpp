@@ -7,7 +7,7 @@
 #include "qpbo/QPBO.h"
 #include "nifty/tools/runtime_check.hpp"
 #include "nifty/infusion/infusion.hpp"
-#include "nifty/infusion/optimizers/inplace/inplace_optimizer_base.hpp"
+#include "nifty/infusion/optimizers/inplace/inplace_discrete_graphical_model_optimizer_base.hpp"
 
 namespace nifty {
 namespace infusion {
@@ -17,14 +17,14 @@ namespace infusion {
 
 
 
-    template<class T>
-    class Qpbo : public InplaceOptimzerBase<Qpbo<T>>
+    template<class VARIABLE_SPACE, class T=float>
+    class Qpbo : public InplaceDiscreteGraphicalModelOptimzerBase<Qpbo<T>>
     {
     private:
         typedef T QpboInternalValueType; 
         typedef qpbo::QPBO<QpboInternalValueType> InternalQpboType;
-    public:
-
+    public: 
+        typedef VARIABLE_SPACE VariabeSpaceType;
         struct Parameters{
             int reserve_edges{0}; 
             bool enforce_skip_merge_parallel_edges{false};
@@ -36,15 +36,16 @@ namespace infusion {
         };
 
         Qpbo(
-            const NVariablesType n_variables,
+            const VariabeSpaceType & variable_space,
             const Parameters & parameters
         )
-        :   n_variables_(n_variables),
+        :   variable_space_(variable_space),
+            n_variables_(variable_space.n_variables()),
             parameters_(parameters),
-            internal_qpbo_(new InternalQpboType(n_variables,parameters.reserve_edges)),
+            internal_qpbo_(new InternalQpboType(variable_space.n_variables(),parameters.reserve_edges)),
             might_need_parallel_edge_merging_(false)
         {
-            internal_qpbo_->AddNode(n_variables);
+            internal_qpbo_->AddNode(n_variables_);
         }
 
 
@@ -87,8 +88,7 @@ namespace infusion {
 
 
 
-        template<class RESULT>
-        void optimize(RESULT & result){
+        void optimize(){
 
             if(might_need_parallel_edge_merging_ && ! parameters_.enforce_skip_merge_parallel_edges){
                 internal_qpbo_->MergeParallelEdges();
@@ -98,29 +98,28 @@ namespace infusion {
                 internal_qpbo_->Solve();
             }
 
-            for(auto vi=0; vi<n_variables_; ++vi){
-                auto l = internal_qpbo_->GetLabel(vi);
-                if(l==0 || l==1){
-                    result[vi] = l;
-                }
-                else{
-                    result[vi] = 0;
-                }
-            }
+            if(!parameters_.strong_persistency) {
+                internal_qpbo_->ComputeWeakPersistencies();
+            } 
         }
 
-        auto optimize(){
-            std::vector<DiscreteLabelType>  result(n_variables_);
-            this->optimize(result);
-            return result;
+        auto state(const VariableIndexType vi)const{
+            const auto ql = internal_qpbo_->GetLabel(vi);
+            if(ql == 0 || ql == 1){
+                return DiscreteLabelType(ql);
+            }
+            else{
+                return DiscreteLabelType(0);
+            }
         }
+        
 
 
 
 
     private:
 
-
+        const VariabeSpaceType variable_space_;
         NVariablesType n_variables_;
         Parameters parameters_;
         std::unique_ptr<InternalQpboType> internal_qpbo_;

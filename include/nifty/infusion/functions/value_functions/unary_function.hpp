@@ -67,14 +67,17 @@ public:
     using DiscreteValueFunctionBaseType::operator();
 
     UnaryFunction()
-    :   ArrayBaseType(){
+    :   DiscreteValueFunctionBaseType(),
+        ArrayBaseType()
+    {
     }
 
     UnaryFunction(std::initializer_list<float> values)
-    :   ArrayBaseType()
+    :   DiscreteValueFunctionBaseType(),
+        ArrayBaseType()
     {
         NIFTY_CHECK_OP(this->size(),==, N_LABELS, "invalid size");
-        std::copy(this->begin(), this->end(), values_.begin());
+        std::copy(values.begin(), values.end(), this->begin());
     }
 
     constexpr auto n_labels(std::size_t i)const{
@@ -87,8 +90,7 @@ public:
     auto operator()(const LABELS & labels)const{
         return this->operator[](labels[0]);
     }
-private:
-    std::array<float, N_LABELS> values_;
+
 };
 
 

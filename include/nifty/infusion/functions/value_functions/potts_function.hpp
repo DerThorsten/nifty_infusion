@@ -34,6 +34,9 @@ public:
     auto n_labels(std::size_t i)const{
         return n_labels_;
     }
+    auto size()const{
+        return n_labels_*n_labels_;
+    }
     auto arity()const{
         return 2;
     }
@@ -62,6 +65,9 @@ public:
 
     constexpr auto n_labels(std::size_t i)const{
         return N_LABELS;
+    }
+    auto size()const{
+        return N_LABELS*N_LABELS;
     }
     constexpr auto arity()const{
         return 2;
