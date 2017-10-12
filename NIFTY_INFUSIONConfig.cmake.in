@@ -15,11 +15,11 @@ set_and_check(${PN}_INCLUDE_DIR
 
 set_and_check(${PN}_INCLUDE_DIRS  
     "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@"
-    "@NIFTY_EXTERNAL_INCLUDE_DIRS@"
 )
 
-set_and_check(${PN}_LIBRARIES      
-    "@NIFTY_EXTERNAL_LIBRARIES@")
-
 set(${PN}_LIBRARY "")
+set(${PN}_INFUSION_LIBRARIES "")
 check_required_components(${PN})
+
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})

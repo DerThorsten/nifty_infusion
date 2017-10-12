@@ -263,6 +263,15 @@ configure_package_config_file(${PROJECT_NAME}Config.cmake.in
                               INSTALL_DESTINATION ${${PROJECT_NAME}_CMAKECONFIG_INSTALL_DIR})
 
 
+install(FILES 
+        cmake/modules/FindAD3.cmake
+        cmake/modules/FindQPBO.cmake
+        cmake/modules/FindNIFTY_INFUSION_EXTERNALS.cmake
+        DESTINATION  ${${PROJECT_NAME}_CMAKECONFIG_INSTALL_DIR})
+
+
+
+
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
                                  VERSION ${${PROJECT_NAME}_VERSION}
                                  COMPATIBILITY AnyNewerVersion)
