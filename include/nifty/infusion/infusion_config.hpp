@@ -4,7 +4,7 @@
 
 #define NIFTY_INFUSION_VERSION_MAJOR 0
 #define NIFTY_INFUSION_VERSION_MINOR 1
-#define NIFTY_INFUSION_VERSION_PATCH 7
+#define NIFTY_INFUSION_VERSION_PATCH 8
 
 // DETECT 3.6 <= clang < 3.8 for compiler bug workaround.
 //  from  https://github.com/QuantStack/xtensor/blob/master/include/xtensor/xtensor_config.hpp

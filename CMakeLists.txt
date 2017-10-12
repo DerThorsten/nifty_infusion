@@ -69,13 +69,22 @@ file(GLOB_RECURSE headers include/*.hxx)
 include_directories(include)
 
 
-find_package(NIFTY_INFUSION_EXTERNALS REQUIRED)
-include_directories(${NIFTY_INFUSION_EXTERNALS_INCLUDE_DIRS})
 
-SET(NIFTY_EXTERNAL_LIBRARIES "")
-SET(NIFTY_EXTERNAL_INCLUDE_DIRS "")
+find_package(AD3 REQUIRED)
+find_package(QPBO REQUIRED)
 
 
+#---------------------------------------------------
+# QPBO
+#---------------------------------------------------
+find_package(QPBO REQUIRED)
+include_directories(${QPBO_INCLUDE_DIRS})
+
+#---------------------------------------------------
+# AD3
+#---------------------------------------------------
+find_package(AD3 REQUIRED)
+include_directories(${AD3_INCLUDE_DIRS})
 
 #---------------------------------------------------
 # xtensor
