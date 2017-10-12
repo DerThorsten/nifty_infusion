@@ -76,16 +76,20 @@ SET(NIFTY_EXTERNAL_INCLUDE_DIRS "")
 # NIFTY_META
 #---------------------------------------------------
 find_package(NIFTY_META REQUIRED)
-include_directories(${NIFTY_META_INCLUDE_DIRS})
-
+SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
+    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
+    ${NIFTY_META_INCLUDE_DIRS}
+)
 
 
 #---------------------------------------------------
 # NIFTY_TOOLS
 #---------------------------------------------------
 find_package(NIFTY_TOOLS REQUIRED)
-include_directories(${NIFTY_TOOLS_INCLUDE_DIRS})
-
+SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
+    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
+    ${NIFTY_TOOLS_INCLUDE_DIRS}
+)
 
 #---------------------------------------------------
 # QPBO
