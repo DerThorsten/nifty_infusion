@@ -42,9 +42,7 @@ list(REMOVE_ITEM files "test_infusion_infusion")
 # test executable
 add_executable(test_nifty_infusion test_nifty_infusion.cpp ${files})
 
-message(STATUS "JHEEEEEEE" ${AD3_LIBRARY})
-message(STATUS "JHEEEEEEE" ${QPBO_LIBRARY})
-target_link_libraries(test_nifty_infusion   ${AD3_LIBRARY}  ${QPBO_LIBRARY})
+target_link_libraries(test_nifty_infusion   ${NIFTY_EXTERNAL_LIBRARIES})
 
 # declare the executable as test
 add_test(NAME test_nifty_infusion COMMAND test_nifty_infusion)

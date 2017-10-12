@@ -69,11 +69,15 @@ file(GLOB_RECURSE headers include/*.hxx)
 include_directories(include)
 
 
+SET(NIFTY_EXTERNAL_LIBRARIES "")
+SET(NIFTY_EXTERNAL_INCLUDE_DIRS "")
+
 #---------------------------------------------------
 # NIFTY_META
 #---------------------------------------------------
 find_package(NIFTY_META REQUIRED)
 include_directories(${NIFTY_META_INCLUDE_DIRS})
+
 
 
 #---------------------------------------------------
@@ -87,17 +91,31 @@ include_directories(${NIFTY_TOOLS_INCLUDE_DIRS})
 # QPBO
 #---------------------------------------------------
 find_package(QPBO REQUIRED)
-include_directories(${QPBO_INCLUDE_DIRS})
+# include_directories(${QPBO_INCLUDE_DIRS})
+SET(NIFTY_EXTERNAL_LIBRARIES 
+    ${NIFTY_EXTERNAL_LIBRARIES}
+    ${QPBO_LIBRARY}
+)
+SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
+    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
+    ${QPBO_INCLUDE_DIRS}
+)
 
 #---------------------------------------------------
 # AD3
 #---------------------------------------------------
 find_package(AD3 REQUIRED)
-include_directories(${AD3_INCLUDE_DIRS})
+# include_directories(${AD3_INCLUDE_DIRS})
+SET(NIFTY_EXTERNAL_LIBRARIES 
+    ${NIFTY_EXTERNAL_LIBRARIES}
+    ${AD3_LIBRARY}
+)
+SET(NIFTY_EXTERNAL_INCLUDE_DIRS 
+    ${NIFTY_EXTERNAL_INCLUDE_DIRS}
+    ${AD3_INCLUDE_DIRS}
+)
 
-
-
-
+include_directories(${NIFTY_EXTERNAL_INCLUDE_DIRS})
 if(FALSE)
 
     #---------------------------------------------------

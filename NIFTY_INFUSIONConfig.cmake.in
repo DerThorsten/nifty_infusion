@@ -2,13 +2,24 @@
 # This module sets the following variables in your project::
 #
 #   NIFTY_INFUSION_FOUND - true if NIFTY_INFUSION found on the system
-#   NIFTY_INFUSION_INCLUDE_DIRS - the directory containing NIFTY_INFUSION headers
+#   NIFTY_INFUSION_INCLUDE_DIR  - the directory containing NIFTY_INFUSION
+#   NIFTY_INFUSION_INCLUDE_DIRS - the directory containing NIFTY_INFUSION and dependency headers
 #   NIFTY_INFUSION_LIBRARY - EMPTY
-
+#   NIFTY_INFUSION_LIBRARIES - libraries of all dependencies (qpbo etc)
 @PACKAGE_INIT@
 
 set(PN NIFTY_INFUSION)
-set_and_check(${PN}_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
-set_and_check(${PN}_LIBRARY      "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_LIBDIR@"/qpbo)
+
+set_and_check(${PN}_INCLUDE_DIR   
+    "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
+
+set_and_check(${PN}_INCLUDE_DIRS  
+    "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@"
+    "@NIFTY_EXTERNAL_INCLUDE_DIRS@"
+)
+
+set_and_check(${PN}_LIBRARIES      
+    "@NIFTY_EXTERNAL_LIBRARIES@")
+
 set(${PN}_LIBRARY "")
 check_required_components(${PN})
