@@ -1,6 +1,13 @@
 #pragma once
 
 
+#include <xtensor/xexpression.hpp>
+#include <xtensor/xview.hpp>
+
+
+#include "nifty/infusion/functions/value_functions/unary_function.hpp"
+
+
 namespace nifty {
 namespace infusion {
     
@@ -12,7 +19,7 @@ namespace infusion {
 
 
         // must have
-        auto variable_space() const {
+        const auto & variable_space() const {
             return this->derived_cast().variable_space();
         }
 
@@ -21,6 +28,38 @@ namespace infusion {
         }
 
         
+
+
+
+
+        auto n_variables() const {
+            return this->variable_space().n_variables();
+        }
+
+
+        // adding batch factors
+        template<class EXPRESSION>
+        void add_unaries(
+            const xt::xexpression<EXPRESSION> & unaries_expression
+        ){
+            typedef UnaryFunction<> UnaryFunctionType;
+            const auto unaries = unaries_expression.derived_cast();
+            const auto & shape = unaries.shape();
+            const auto n_labels = shape[1];
+            for(auto vi=0; vi< this->n_variables(); ++vi){
+                const auto unary_array_for_vi = xt::view(unaries, vi,xt::all());
+                UnaryFunctionType unary_function(n_labels);
+                std::copy(unary_array_for_vi.begin(), unary_array_for_vi.end(), 
+                    unary_function.begin());
+                
+                // add the unary factor
+                this->derived_cast().add_factor({vi}, unary_function);
+            } 
+
+        }
+
+
+
 
 
 

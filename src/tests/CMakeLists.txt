@@ -41,10 +41,9 @@ list(REMOVE_ITEM files "test_infusion_infusion")
 
 # test executable
 add_executable(test_nifty_infusion test_nifty_infusion.cpp ${files})
-
+message(STATUS "THELIBS" ${EXTERNAL_LIBS})
 target_link_libraries(test_nifty_infusion  
-    ${QPBO_LIBRARY}
-    ${AD3_LIBRARY}
+    ${EXTERNAL_LIBS}
 )
 
 # declare the executable as test

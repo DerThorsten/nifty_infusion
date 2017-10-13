@@ -139,6 +139,9 @@ namespace infusion {
 
         
         
+        const VariabeSpaceType & variable_space()const{
+            return variable_space_;
+        }
 
     private:
 

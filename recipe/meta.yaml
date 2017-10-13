@@ -22,13 +22,14 @@ requirements:
     - boost-cpp
     - qpbo >=0.3.11
     - ad3-cpp >=2.5.4
+    - libdai >=0.4.4
     - nifty-meta >=0.5.3
     - nifty-tools >=0.3.5
     - xtensor
   run:
     - qpbo >=0.3.11
     - ad3-cpp >=2.5.4
-
+    - libdai >=0.4.4
 test:
   commands:
     - test -d ${PREFIX}/include/nifty/          # [unix]

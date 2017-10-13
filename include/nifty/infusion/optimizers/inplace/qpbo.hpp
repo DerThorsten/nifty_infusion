@@ -18,7 +18,7 @@ namespace infusion {
 
 
     template<class VARIABLE_SPACE, class T=float>
-    class Qpbo : public InplaceDiscreteGraphicalModelOptimzerBase<Qpbo<T>>
+    class Qpbo : public InplaceDiscreteGraphicalModelOptimzerBase<Qpbo<VARIABLE_SPACE, T>>
     {
     private:
         typedef T QpboInternalValueType; 
@@ -114,12 +114,14 @@ namespace infusion {
         }
         
 
-
+        const VariabeSpaceType & variable_space()const{
+            return variable_space_;
+        }
 
 
     private:
 
-        const VariabeSpaceType variable_space_;
+        const VariabeSpaceType & variable_space_;
         NVariablesType n_variables_;
         Parameters parameters_;
         std::unique_ptr<InternalQpboType> internal_qpbo_;

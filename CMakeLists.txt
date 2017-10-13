@@ -70,9 +70,15 @@ include_directories(include)
 
 
 
-find_package(AD3 REQUIRED)
-find_package(QPBO REQUIRED)
 
+
+
+
+#---------------------------------------------------
+# AD3 
+#---------------------------------------------------
+find_package(AD3 REQUIRED)
+include_directories(${AD3_INCLUDE_DIRS})
 
 #---------------------------------------------------
 # QPBO
@@ -81,11 +87,22 @@ find_package(QPBO REQUIRED)
 include_directories(${QPBO_INCLUDE_DIRS})
 
 #---------------------------------------------------
-# AD3
+# LIBDAI
 #---------------------------------------------------
-find_package(AD3 REQUIRED)
-include_directories(${AD3_INCLUDE_DIRS})
+find_package(LIBDAI REQUIRED)
+include_directories(${LIBDAI_INCLUDE_DIRS})
+add_definitions(${LIBDAI_COMPILE_DEFINITIONS})
 
+SET(EXTERNAL_LIBS 
+    ${AD3_LIBRARIES}
+    ${QPBO_LIBRARIES}
+    ${LIBDAI_LIBRARY}
+    ${LIBDAI_LIBRARIES}
+    ${GMP_LIBRARIES}
+    ${GMPXX_LIBRARIES}
+)
+
+message(STATUS "THELIBDAI" ${LIBDAI_LIBRARIES})
 #---------------------------------------------------
 # xtensor
 #---------------------------------------------------
@@ -108,25 +125,7 @@ include_directories(${NIFTY_TOOLS_INCLUDE_DIRS})
 
 if(FALSE)
 
-    #---------------------------------------------------
-    # ad3 
-    #---------------------------------------------------
-    ExternalProject_Add(
-        external_ad3
-        PREFIX ${CMAKE_BINARY_DIR}/external_projects/ad3
-        GIT_REPOSITORY https://github.com/andre-martins/AD3
-        GIT_TAG 2.1
-        TIMEOUT 5
-        #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        LOG_DOWNLOAD ON
-    )
-    # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-    ExternalProject_Get_Property(external_ad3 source_dir)
-    set(AD3_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for ad3")
-    include_directories(${AD3_INCLUDE_DIR})
+  
 
 
     #---------------------------------------------------
@@ -173,25 +172,6 @@ if(FALSE)
     include_directories(${IBFS_INCLUDE_DIR})
 
 
-    #---------------------------------------------------
-    # libdai 
-    #---------------------------------------------------
-    ExternalProject_Add(
-        external_libdai
-        PREFIX ${CMAKE_BINARY_DIR}/external_projects/libdai
-        GIT_REPOSITORY https://github.com/DerThorsten/libDAI-1
-        GIT_TAG 0.1.0
-        TIMEOUT 5
-        #UPDATE_COMMAND ${GIT_EXECUTABLE} pull
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        LOG_DOWNLOAD ON
-    )
-    # Expose required variable (DOCTEST_INCLUDE_DIR) to parent scope
-    ExternalProject_Get_Property(external_libdai source_dir)
-    set(LIBDAI_INCLUDE_DIR ${source_dir}/include/ CACHE INTERNAL "Path to include folder for xtensor")
-    include_directories(${LIBDAI_INCLUDE_DIR})
 
 endif()
 

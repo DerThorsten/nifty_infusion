@@ -11,11 +11,10 @@ fi
 export EXTRA_CMAKE_ARGS
 
 export NIFTY_INFUSION_CXX_FLAGS="${CXXFLAGS}"
-#export NIFTY_INFUSION_CXX_FLAGS="${CXXFLAGS} -std=c++11"
+export NIFTY_INFUSION_CXX_FLAGS="${CXXFLAGS} -std=c++141"
 
 
 export NIFTY_INFUSION_LDFLAGS="${CXX_LDFLAGS} -Wl,-rpath,${PREFIX}/lib -L${PREFIX}/lib"
-
 
 
 
