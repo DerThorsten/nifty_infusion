@@ -37,7 +37,7 @@ namespace infusion {
         }
 
 
-        // adding batch factors
+        // adding batch factors from arrays
         template<class EXPRESSION>
         void add_unaries(
             const xt::xexpression<EXPRESSION> & unaries_expression
@@ -59,13 +59,7 @@ namespace infusion {
         }
 
 
-
-
-
-
-
-        
-
+    
 
         // optimality
         bool is_optimal()const{
@@ -80,20 +74,7 @@ namespace infusion {
                 true : false;
         }
 
-        // bool could_be_optimal(const VariableIndexType vi, const DiscreteLabelType state)const{
-        //     if(this->derived_cast().is_optimal())
-        //         return this->derived_cast().state(vi) == state ? true : false;
-        //     else
-        //         return true;
-        // }
-
-        
-
-
-
-
-
-        
+    
 
 
 
