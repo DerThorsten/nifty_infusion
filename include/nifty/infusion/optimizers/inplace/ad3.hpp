@@ -49,12 +49,12 @@ namespace infusion {
             parameters_(parameters),
             factor_graph_(),
             multi_variables_(variable_space.n_variables()),
+            multi_variables_local_(),
             posteriors_(),
             additional_posteriors_(),
-            bound_(),
+            value_buffer_(),
             arg_(variable_space.n_variables()),
-            inferenceDone_(false),
-            space_(0)
+            inference_done_(false)
         {
             // fill space :
             //  - Create a multi-valued variable for variable of gm 
@@ -131,6 +131,7 @@ namespace infusion {
                 arg_[vi] = best_label;
                 c += nl;
             }
+            inference_done_ = true;
         }
 
         auto state(const VariableIndexType vi)const{
@@ -165,29 +166,21 @@ namespace infusion {
             const FUNCTION & function,
             const ArityType arity
         ){
-            // make ad3 values (TODO: buffer/optimize)
-            std::vector<double> additional_log_potentials(function.size());
-            if(arity == 2){
-                {
-                    auto c=0;
-                    for(auto x0=0; x0<function.n_labels(0); ++x0)
-                    for(auto x1=0; x1<function.n_labels(1); ++x1){
-                        const auto val = function(x0, x1) * -1.0;
-                        additional_log_potentials[c] = val;
-                        ++c;
-                    }
-                }
+           
+            value_buffer_.resize(function.size());
+            function.c_order_buffer(value_buffer_,[](const auto & val){
+                return -1.0 * val;
+            });
 
-            }
-
-            // make ad3 variables (TODO: buffer/optimize)
+            // local variables
+            multi_variables_local_.resize(arity);
             std::vector<AD3::MultiVariable*> multi_variables_local(arity);
-            for(auto v=0; v<arity; ++v){
-                multi_variables_local[v] = multi_variables_[variables[v]];
-            }
+            for(auto v=0; v<arity; ++v)
+                multi_variables_local_[v] = multi_variables_[variables[v]];
+
 
             // create higher order factor
-            factor_graph_.CreateFactorDense(multi_variables_local,additional_log_potentials);
+            factor_graph_.CreateFactorDense(multi_variables_local_,value_buffer_);
         }
 
 
@@ -202,14 +195,14 @@ namespace infusion {
         
 
         AD3::FactorGraph factor_graph_;
-        std::vector<AD3::MultiVariable*>  multi_variables_;
-
+        std::vector<AD3::MultiVariable*> multi_variables_;
+        std::vector<AD3::MultiVariable*> multi_variables_local_;
         std::vector<double> posteriors_;
         std::vector<double> additional_posteriors_;
-        double bound_;
+        std::vector<double> value_buffer_;
         std::vector<DiscreteLabelType> arg_;
-        bool inferenceDone_;
-        std::vector<NDisceteLabelsType> space_;  // only used if setup without gm
+        bool inference_done_;
+
 
 
 

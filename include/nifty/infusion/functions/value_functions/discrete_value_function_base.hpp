@@ -55,8 +55,15 @@ public:
     }
     
 
-    template<class BUFFER_TYPE>
-    void c_order_buffer(std::vector<BUFFER_TYPE> & buffer )const{
+
+
+
+
+    template<class BUFFER_TYPE, class FUNCTOR>
+    void c_order_buffer(
+        std::vector<BUFFER_TYPE> & buffer,
+        FUNCTOR && functor
+    )const{
 
         const auto derived = this->derived_cast();
         const auto dim = derived.arity();
@@ -68,7 +75,7 @@ public:
         switch(dim){
             case 1:{
                 for(auto x0=0; x0<derived.shape(0); ++x0){
-                    buffer[x0] = derived(x0);
+                    buffer[x0] = functor( derived(x0));
                 }
                 break;
             }
@@ -76,7 +83,7 @@ public:
                 auto i = 0;
                 for(auto x0=0; x0<derived.shape(0); ++x0)
                 for(auto x1=0; x1<derived.shape(1); ++x1){
-                    buffer[i] = derived(x0, x1);
+                    buffer[i] = functor( derived(x0, x1));
                     ++i;
                 }
                 break;
@@ -86,7 +93,7 @@ public:
                 for(auto x0=0; x0<derived.shape(0); ++x0)
                 for(auto x1=0; x1<derived.shape(1); ++x1)
                 for(auto x2=0; x2<derived.shape(2); ++x2){
-                    buffer[i] = derived(x0, x1, x2);
+                    buffer[i] = functor( derived(x0, x1, x2));
                     ++i;
                 }
                 break;
@@ -97,7 +104,7 @@ public:
                 for(auto x1=0; x1<derived.shape(1); ++x1)
                 for(auto x2=0; x2<derived.shape(2); ++x2)
                 for(auto x3=0; x3<derived.shape(3); ++x3){
-                    buffer[i] = derived(x0, x1, x2, x3);
+                    buffer[i] = functor( derived(x0, x1, x2, x3));
                     ++i;
                 }
                 break;
@@ -108,8 +115,12 @@ public:
         }
     }
 
-    template<class BUFFER_TYPE>
-    void f_order_buffer(std::vector<BUFFER_TYPE> & buffer )const{
+
+    template<class BUFFER_TYPE, class FUNCTOR>
+    void f_order_buffer(
+        std::vector<BUFFER_TYPE> & buffer,
+        FUNCTOR && functor
+    )const{
 
         const auto derived = this->derived_cast();
         const auto dim = derived.arity();
@@ -121,7 +132,7 @@ public:
         switch(dim){
             case 1:{
                 for(auto x0=0; x0<derived.shape(0); ++x0){
-                    buffer[x0] = derived(x0);
+                    buffer[x0] = functor( derived(x0));
                 }
                 break;
             }
@@ -129,7 +140,7 @@ public:
                 auto i = 0;
                 for(auto x1=0; x1<derived.shape(1); ++x1)
                 for(auto x0=0; x0<derived.shape(0); ++x0){
-                    buffer[i] = derived(x0, x1);
+                    buffer[i] = functor( derived(x0, x1));
                     ++i;
                 }
                 break;
@@ -139,7 +150,7 @@ public:
                 for(auto x2=0; x2<derived.shape(2); ++x2)
                 for(auto x1=0; x1<derived.shape(1); ++x1)
                 for(auto x0=0; x0<derived.shape(0); ++x0){
-                    buffer[i] = derived(x0, x1, x2);
+                    buffer[i] = functor( derived(x0, x1, x2));
                     ++i;
                 }
                 break;
@@ -150,7 +161,7 @@ public:
                 for(auto x2=0; x2<derived.shape(2); ++x2)
                 for(auto x1=0; x1<derived.shape(1); ++x1)
                 for(auto x0=0; x0<derived.shape(0); ++x0){
-                    buffer[i] = derived(x0, x1, x2, x3);
+                    buffer[i] = functor( derived(x0, x1, x2, x3));
                     ++i;
                 }
                 break;
@@ -160,6 +171,26 @@ public:
             }
         }
     }
+
+
+
+
+
+    template<class BUFFER_TYPE>
+    void c_order_buffer(std::vector<BUFFER_TYPE> & buffer )const{
+        this->derived_cast().c_order_buffer(buffer, [](const auto & val){
+            return val;
+        });
+    }
+
+    template<class BUFFER_TYPE>
+    void f_order_buffer(std::vector<BUFFER_TYPE> & buffer )const{
+        this->derived_cast().f_order_buffer(buffer, [](const auto & val){
+            return val;
+        });
+    }
+
+
 };
 
 
